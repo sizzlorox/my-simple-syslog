@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.js"
   },
   "author": "sizzlorox",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "stdio": "^0.2.7"
+  }
 }

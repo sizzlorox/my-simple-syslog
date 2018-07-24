@@ -1,4 +1,5 @@
 const fs = require('fs');
+const stdio = require('stdio');
 const monthReg = '((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Sept|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?))';
 const whiteSpaceReg = '(\\s+)';
 const digitReg = '(\\d)';
@@ -10,9 +11,21 @@ const datePattern = new RegExp(monthReg + whiteSpaceReg + digitReg + digitReg + 
 const ipPattern = new RegExp(ipReg, 'g');
 // const macPattern = new RegExp(macReg, 'g');
 let lastLine;
+let logPath = '';
 
-fs.watchFile('/var/log/router.log', function (event) {
-  fs.readFile('/var/log/router.log', 'utf-8', (err, data) => {
+stdio.question('Path to log to visualize (ex: /var/log/router.log): ', function (err, value) {
+  if (err) {
+    return console.log(err);
+  }
+  if (value) {
+    logPath = value;
+  } else {
+    return console.log('No path');
+  }
+});
+
+fs.watchFile(logPath, function (event) {
+  fs.readFile(logPath, 'utf-8', (err, data) => {
     if (err) {
       return console.log(err);
     }
