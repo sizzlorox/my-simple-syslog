@@ -11,40 +11,37 @@ const datePattern = new RegExp(monthReg + whiteSpaceReg + digitReg + digitReg + 
 const ipPattern = new RegExp(ipReg, 'g');
 // const macPattern = new RegExp(macReg, 'g');
 let lastLine;
-let logPath = '';
 
-stdio.question('Path to log to visualize (ex: /var/log/router.log): ', function (err, value) {
+stdio.question('Path to log to visualize (ex: /var/log/router.log): ', (err, value) => {
   if (err) {
     return console.log(err);
   }
   if (value) {
-    logPath = value;
-  } else {
-    return console.log('No path');
-  }
-});
-
-fs.watchFile(logPath, function (event) {
-  fs.readFile(logPath, 'utf-8', (err, data) => {
-    if (err) {
-      return console.log(err);
-    }
-    const lines = data.trim().split("\n");
-    lastLine = lastLine ? lastLine : lines.length - 25;
-    console.log(`Last Line: ${lastLine} - LineLength: ${lines.length}`);
-    lines.slice(lastLine, lines.length).forEach((line) => {
-      const date = line.match(datePattern);
-      const ipAddresses = line.match(ipPattern);
-      // const macAddresses = line.match(macPattern);
-      const src = ipAddresses[0];
-      // const destination = ipAddresses[1];
-      const message = line.split(`${ipAddresses[0]} `)[1];
-      console.log(`.-----------------------------------------------------------------------------------------.
+    fs.watchFile(value, (event) => {
+      fs.readFile(value, 'utf-8', (err, data) => {
+        if (err) {
+          return console.log(err);
+        }
+        const lines = data.trim().split("\n");
+        lastLine = lastLine ? lastLine : lines.length - 25;
+        console.log(`Last Line: ${lastLine} - LineLength: ${lines.length}`);
+        lines.slice(lastLine, lines.length).forEach((line) => {
+          const date = line.match(datePattern);
+          const ipAddresses = line.match(ipPattern);
+          // const macAddresses = line.match(macPattern);
+          const src = ipAddresses[0];
+          // const destination = ipAddresses[1];
+          const message = line.split(`${ipAddresses[0]} `)[1];
+          console.log(`.-----------------------------------------------------------------------------------------.
 | Date: ${date} Source: ${src.padEnd(58, ' ')}|
 |-----------------------------------------------------------------------------------------|
 | Message: ${message.padEnd(79, ' ')}|
 .-----------------------------------------------------------------------------------------.
-`);
+      `);
+        });
+      });
     });
-  });
+  } else {
+    return console.log('No path');
+  }
 });
